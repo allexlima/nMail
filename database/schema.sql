@@ -20,6 +20,7 @@ CREATE TABLE n_contacts(
     c_user_id SMALLINT NOT NULL,
     friend_id SMALLINT NOT NULL,
     friendship_start_date TIMESTAMP,
+    friendship_accepted BOOL DEFAULT false,
     PRIMARY KEY(c_user_id, friend_id),
     FOREIGN KEY(c_user_id) REFERENCES n_users (user_id),
     FOREIGN KEY(friend_id) REFERENCES n_users (user_id)
@@ -30,6 +31,7 @@ CREATE TABLE n_messages(
     msg_title VARCHAR(90) NOT NULL,
     msg_content TEXT,
     msg_viewd BOOL DEFAULT false,
+    from_system BOOL DEFAULT false,
     send_datetime TIMESTAMP,
     user_sender SMALLINT,
     user_receiver SMALLINT,
