@@ -3,8 +3,8 @@
 import psycopg2
 
 try:
-    connect_str = "dbname='n_mail' user='allex' host='localhost' " + \
-                  "password='allex'"
+    connect_str = "dbname='n_mail' __user='allex' host='localhost' " + \
+                  "__password='allex'"
     # use our connection values to establish a connection
     conn = psycopg2.connect(connect_str)
     # create a psycopg2 cursor that can execute queries
@@ -15,5 +15,5 @@ try:
     rows = cursor.fetchall()
     print(rows)
 except Exception as e:
-    print("Uh oh, can't connect. Invalid dbname, user or password?")
+    print("Uh oh, can't connect. Invalid dbname, __user or __password?")
     print(e)
