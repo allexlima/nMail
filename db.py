@@ -2,6 +2,7 @@
 
 import psycopg2 as psql
 from datetime import datetime
+import json
 
 
 class Database(object):
@@ -20,7 +21,8 @@ class Database(object):
         try:
             self.__conn = psql.connect(ps_dsn)
         except psql.Error as e:
-            print(e)
+            self.log.append("Erro ao conectar-se ao banco de dados")
+            print(e.pgerror)
 
     def disconnect(self):
         if self.__conn:
@@ -58,11 +60,14 @@ class Database(object):
         return user_id[0][0] if user_id else -1
 
     def list_user(self, user_id=None):
-        pass
-
+        query = "SELECT user_name, user_email, user_registration_date, user_admin FROM n_users {} ORDER BY " \
+                "user_registration_date DESC;"
+        id_if_necessary = "WHERE user_id = {}".format(int(user_id)) if user_id else ""
+        query = query.format(id_if_necessary)
+        return self.run(query, fetch=True)
 
 if __name__ == "__main__":
     test = Database('allex', 'allex')
     test.connect()
-    id = test.insert_user('Fulano', '123', 'fulando@gmail.com')
-    print(id)
+    print(test.list_user())
+    test.disconnect()
