@@ -6,7 +6,7 @@ from psycopg2.extras import DictCursor
 class PostrgeSQL(object):
     def __init__(self):
         self.__conn = None
-        self.log = []
+        self.__log = []
 
     @staticmethod
     def __config():
@@ -18,26 +18,33 @@ class PostrgeSQL(object):
         try:
             self.__conn = psql.connect("user={} password={} dbname={} host={} port={}".format(*self.__config()))
         except Exception as e:
-            self.log.append("Erro ao conectar-se ao banco de dados")
-            print(e)
+            self.write_log(e)
 
     def db_disconnect(self):
         if self.__conn:
             self.__conn.close()
 
-    def query(self, sql, commit=False, fetch=False):
+    def query(self, sql, params=None, commit=False, fetch=False):
+        feedback = False
         if self.__conn is not None:
             try:
                 cursor = self.__conn.cursor(cursor_factory=DictCursor)
-                cursor.execute(sql)
+                cursor.execute(sql, params)
                 if commit is True:
                     self.__conn.commit()
-                if fetch is True:
-                    return cursor.fetchall()
-            except psql.InterfaceError as e:
-                self.log.append("Erro ao conectar-se ao banco. Conexão indisponível ou encerrada")
-                print(e)
+                feedback = cursor.fetchall() if fetch is True else True
+                cursor.close()
+            except Exception:
+                if commit is True:
+                    self.__conn.rollback()
+                raise
         else:
-            msg = "É necessário iniciar uma conexão com o banco antes de executar operações"
-            self.log.append(msg)
-            raise ConnectionError(msg)
+            self.write_log("É necessário iniciar uma conexão com o banco antes de executar operações")
+        return feedback
+
+    def write_log(self, msg):
+        self.__log.append(msg)
+        print(msg)
+
+    def view_log(self):
+        return self.__log
