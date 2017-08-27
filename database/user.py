@@ -4,8 +4,8 @@ from datetime import datetime
 
 class User(PostrgeSQL):
     def list(self, user_id=None):
-        sql = "SELECT user_name, user_email, user_registration_date, user_admin FROM n_users {} ORDER BY " \
-                "user_registration_date DESC;"
+        sql = "SELECT user_name, user_email, user_registration_date, user_active, user_admin FROM n_users {} " \
+              "ORDER BY user_registration_date DESC;"
         id_if_necessary = "WHERE user_id = {}".format(int(user_id)) if user_id else ""
         sql = sql.format(id_if_necessary)
         return [dict(item) for item in self.query(sql, fetch=True)]
@@ -60,3 +60,12 @@ class User(PostrgeSQL):
         sql += "WHERE user_id = (%s);"
         return self.query(sql, params, commit=True)
 
+    def login(self, user_email, user_password):
+        """Função básica de login. É importante lembrar que é o PostgreSql que gerencia a segurança da senha
+        a partir do tipo CHKPASS.
+        :returns user_id, user_active
+        """
+        sql = "SELECT user_id, user_active FROM n_users WHERE user_email = (%s) AND user_password = (%s);"
+        params = [user_email, user_password]
+        result = self.query(sql, params, fetch=True)
+        return tuple(result[0]) if len(result) > 0 else -1
