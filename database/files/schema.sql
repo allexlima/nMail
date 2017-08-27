@@ -11,6 +11,7 @@ CREATE TABLE n_users(
     user_password CHKPASS,
     user_registration_date TIMESTAMP,
     user_admin BOOL DEFAULT false,
+    user_active BOOL DEFAULT true,
     PRIMARY KEY(user_id)
 );
 
