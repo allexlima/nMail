@@ -61,11 +61,20 @@ class User(PostrgeSQL):
         return self.query(sql, params, commit=True)
 
     def login(self, user_email, user_password):
-        """Função básica de login. É importante lembrar que é o PostgreSql que gerencia a segurança da senha
-        a partir do tipo CHKPASS.
+        """Basic login method. It's important say that the password encryption is done by Postgresql,
+        through the CHKPASS column type.
         :returns user_id, user_active
         """
         sql = "SELECT user_id, user_active FROM n_users WHERE user_email = (%s) AND user_password = (%s);"
         params = [user_email, user_password]
         result = self.query(sql, params, fetch=True)
         return tuple(result[0]) if len(result) > 0 else -1
+
+    def search(self, name_or_email):
+        pass
+
+    def add_friend(self, user_id, friend_id):
+        pass
+
+    def block_friend(self, user_id, friend_id):
+        pass

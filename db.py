@@ -7,5 +7,4 @@ if __name__ == "__main__":
     user = User()
     user.db_connect()
     # user.change(34, new_name='Allex Lima', is_admin=True, is_activated=True)
-    print(user.list(34))
-    print(user.login('allexlima97@gmail.com', '123'))
+    print(user.search('allex'))
