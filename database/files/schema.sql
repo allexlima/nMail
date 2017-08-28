@@ -22,7 +22,7 @@ CREATE TABLE n_contacts(
     c_user_id SMALLINT NOT NULL,
     friend_id SMALLINT NOT NULL,
     friendship_start_date TIMESTAMP,
-    friendship_accepted BOOL DEFAULT false,
+    friendship_active BOOL DEFAULT false,
     PRIMARY KEY(c_user_id, friend_id),
     FOREIGN KEY(c_user_id) REFERENCES n_users (user_id),
     FOREIGN KEY(friend_id) REFERENCES n_users (user_id)
@@ -40,3 +40,23 @@ CREATE TABLE n_messages(
     PRIMARY KEY(msg_id),
     FOREIGN KEY(user_sender, user_receiver) REFERENCES n_contacts (c_user_id, friend_id)
 );
+
+CREATE OR REPLACE FUNCTION trg_update_friendship_date() RETURNS TRIGGER AS
+    $BODY$
+        BEGIN
+            IF OLD.friendship_active = False AND NEW.friendship_active = True THEN
+                NEW.friendship_start_date := now();
+            ELSIF OLD.friendship_active = True AND NEW.friendship_active = False THEN
+                NEW.friendship_start_date := NULL;
+            END IF;
+            RETURN NEW;
+        END;
+    $BODY$
+LANGUAGE 'plpgsql';
+
+CREATE TRIGGER trg_update_friendship_date
+    BEFORE UPDATE ON n_contacts
+    FOR EACH ROW EXECUTE PROCEDURE trg_update_friendship_date();
+
+INSERT INTO n_users (user_email, user_name, user_password, user_registration_date, user_admin)
+    VALUES ('admin@example.com', 'Admin', 'admin@123', now(), True);
