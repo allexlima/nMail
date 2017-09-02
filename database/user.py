@@ -71,4 +71,12 @@ class User(PostrgeSQL):
         return tuple(result[0]) if len(result) > 0 else -1
 
     def search(self, name_or_email):
-        pass
+        feedback = False
+        if len(name_or_email) >= 3:
+            sql = "SELECT user_id, user_name, user_email, user_active, user_admin FROM n_users " \
+                  "WHERE LOWER(user_name)  LIKE LOWER(%s) OR LOWER(user_email) = LOWER(%s) AND user_active = TRUE;"
+            params = ['%{}%'.format(name_or_email), name_or_email]
+            feedback = [dict(item) for item in self.query(sql, params, fetch=True)]
+        else:
+            self.write_log("Insira um nome ou e-mail com três caracteres ou mais")
+        return feedback
