@@ -17,6 +17,7 @@ class PostrgeSQL(object):
     def db_connect(self):
         try:
             self.__conn = psql.connect("user={} password={} dbname={} host={} port={}".format(*self.__config()))
+            return self
         except Exception as e:
             self.write_log(e)
 

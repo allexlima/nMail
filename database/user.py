@@ -72,9 +72,3 @@ class User(PostrgeSQL):
 
     def search(self, name_or_email):
         pass
-
-    def add_friend(self, user_id, friend_id):
-        pass
-
-    def block_friend(self, user_id, friend_id):
-        pass
