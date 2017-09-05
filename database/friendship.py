@@ -1,7 +1,7 @@
-from database.base import PostrgeSQL, psql
+class Friendship:
+    def __init__(self, db_obj):
+        self.__db = db_obj
 
-
-class Friendship(PostrgeSQL):
     def following(self, user_id):
         sql = "SELECT contacts.friend_id, users.user_name AS friend_name, users.user_email AS friend_email, " \
               "exists(SELECT * FROM n_contacts fb WHERE fb.c_user_id = contacts.friend_id AND " \
@@ -9,7 +9,7 @@ class Friendship(PostrgeSQL):
               "ON users.user_id = contacts.friend_id WHERE contacts.c_user_id = (%s) " \
               "AND contacts.friendship_active = TRUE;"
         params = [user_id]
-        return [dict(item) for item in self.query(sql, params, fetch=True)]
+        return [dict(item) for item in self.__db.query(sql, params, fetch=True)]
 
     def followers(self, user_id):
         sql = "SELECT contacts.c_user_id, users.user_name, users.user_email, exists(SELECT * FROM n_contacts fb " \
@@ -17,7 +17,7 @@ class Friendship(PostrgeSQL):
               "FROM n_contacts contacts JOIN n_users users ON users.user_id = contacts.c_user_id WHERE " \
               "contacts.friend_id = (%s) AND contacts.friendship_active = TRUE;"
         params = [user_id]
-        return [dict(item) for item in self.query(sql, params, fetch=True)]
+        return [dict(item) for item in self.__db.query(sql, params, fetch=True)]
 
     def requests_for(self, user_id):
         """
@@ -29,7 +29,7 @@ class Friendship(PostrgeSQL):
               "LEFT JOIN n_users AS users ON users.user_id = contacts.c_user_id " \
               "WHERE contacts.friend_id = (%s) AND contacts.friendship_active = FALSE;"
         params = [user_id]
-        return [dict(item) for item in self.query(sql, params, fetch=True)]
+        return [dict(item) for item in self.__db.query(sql, params, fetch=True)]
 
     def send_request(self, user_id, friend_id):
         feedback = False
@@ -38,11 +38,11 @@ class Friendship(PostrgeSQL):
             params = [user_id, friend_id]
 
             try:
-                feedback = self.query(sql, params, commit=True)
+                feedback = self.__db.query(sql, params, commit=True)
             except psql.IntegrityError as e:
-                self.write_log("Solicitação já enviada")
+                self.__db.write_log("Solicitação já enviada")
         else:
-            self.write_log("Você pode pode enviar uma solicitação para você mesmo")
+            self.__db.write_log("Você pode pode enviar uma solicitação para você mesmo")
         return feedback
 
     def accept(self, user_id, persons_id_to_accept):
@@ -51,15 +51,15 @@ class Friendship(PostrgeSQL):
         params = [user_id, persons_id_to_accept]
         feedback = False
 
-        if len(self.query(sql_1, params, fetch=True)) > 0:
-            feedback = self.query(sql_2, params, commit=True)
+        if len(self.__db.query(sql_1, params, fetch=True)) > 0:
+            feedback = self.__db.query(sql_2, params, commit=True)
         else:
-            self.write_log("O usuário {} não enviou uma solicitação de amizade ao usuário {}".format(
+            self.__db.write_log("O usuário {} não enviou uma solicitação de amizade ao usuário {}".format(
                 persons_id_to_accept, user_id))
         return feedback
 
     def block(self, user_id, friend_id_to_block):
         sql = "UPDATE n_contacts SET friendship_active = FALSE WHERE c_user_id = (%s) AND friend_id = (%s);"
         params = [user_id, friend_id_to_block]
-        return self.query(sql, params, commit=True)
+        return self.__db.query(sql, params, commit=True)
 

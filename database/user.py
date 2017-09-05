@@ -1,19 +1,21 @@
-from database.base import PostrgeSQL, psql
 from datetime import datetime
 
 
-class User(PostrgeSQL):
+class User:
+    def __init__(self, db_obj):
+        self.__db = db_obj
+
     def list(self, user_id=None):
         sql = "SELECT user_name, user_email, user_registration_date, user_active, user_admin FROM n_users {} " \
               "ORDER BY user_registration_date DESC;"
         id_if_necessary = "WHERE user_id = {}".format(int(user_id)) if user_id else ""
         sql = sql.format(id_if_necessary)
-        return [dict(item) for item in self.query(sql, fetch=True)]
+        return [dict(item) for item in self.__db.query(sql, fetch=True)]
 
     def get_id(self, user_email):
         sql = "SELECT user_id FROM n_users WHERE user_email = (%s);"
         params = [user_email]
-        result = self.query(sql, params, fetch=True)
+        result = self.__db.query(sql, params, fetch=True)
         return result[0]['user_id'] if len(result) > 0 else -1
 
     def insert(self, name, password, email, active=True, date=str(datetime.now())):
@@ -23,10 +25,10 @@ class User(PostrgeSQL):
         feedback = False
 
         try:
-            if self.query(sql, params, commit=True):
+            if self.__db.query(sql, params, commit=True):
                 feedback = self.get_id(email)
         except psql.IntegrityError:
-            self.write_log("O e-mail '{0}' já encontra-se em uso".format(email))
+            self.__db.write_log("O e-mail '{0}' já encontra-se em uso".format(email))
         finally:
             return feedback
 
@@ -34,7 +36,7 @@ class User(PostrgeSQL):
         sql = "DELETE FROM n_users WHERE user_id = (%s);"
         params = [user_id]
 
-        return self.query(sql, params=params, commit=True)
+        return self.__db.query(sql, params=params, commit=True)
 
     def change(self, user_id, new_name=None, new_email=None, new_password=None, is_activated=True, is_admin=False):
         sql = "UPDATE n_users SET "
@@ -58,7 +60,7 @@ class User(PostrgeSQL):
             sql += item
             sql += ", " if i < len(adds)-1 else " "
         sql += "WHERE user_id = (%s);"
-        return self.query(sql, params, commit=True)
+        return self.__db.query(sql, params, commit=True)
 
     def login(self, user_email, user_password):
         """Basic login method. It's important say that the password encryption is done by Postgresql,
@@ -67,7 +69,7 @@ class User(PostrgeSQL):
         """
         sql = "SELECT user_id, user_active FROM n_users WHERE user_email = (%s) AND user_password = (%s);"
         params = [user_email, user_password]
-        result = self.query(sql, params, fetch=True)
+        result = self.__db.query(sql, params, fetch=True)
         return tuple(result[0]) if len(result) > 0 else -1
 
     def search(self, name_or_email):
@@ -76,7 +78,7 @@ class User(PostrgeSQL):
             sql = "SELECT user_id, user_name, user_email, user_active, user_admin FROM n_users " \
                   "WHERE LOWER(user_name)  LIKE LOWER(%s) OR LOWER(user_email) = LOWER(%s) AND user_active = TRUE;"
             params = ['%{}%'.format(name_or_email), name_or_email]
-            feedback = [dict(item) for item in self.query(sql, params, fetch=True)]
+            feedback = [dict(item) for item in self.__db.query(sql, params, fetch=True)]
         else:
-            self.write_log("Insira um nome ou e-mail com três caracteres ou mais")
+            self.__db.write_log("Insira um nome ou e-mail com três caracteres ou mais")
         return feedback
