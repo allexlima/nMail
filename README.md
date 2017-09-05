@@ -1,2 +1,8 @@
-# nMail
-:rocket: Small Qt program and REST API just to write and read messages in a relational database (PostgreSQL :elephant: &lt;3)
+![AutomataTranslator](https://github.com/allexlima/nMail/blob/master/icon.png?raw=true)
+### Welcome to nmail-server
+
+
+[![Python versions](https://img.shields.io/badge/python-2.7%2C%203.2%2C%203.3%2C%203.4%2C%203.5%2C%203.6-blue.svg)]()
+[![License](https://img.shields.io/badge/license-MIT-green.svg)]()
+
+NMail is nano messenger application written in Python (_webserver_) and using PostgreSQL. And before you ask: it's a **toy project** :bowtie:
