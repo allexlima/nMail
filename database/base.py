@@ -19,8 +19,7 @@ class PostrgeSQL:
             self.__conn = psql.connect("user={} password={} dbname={} host={} port={}".format(*self.__config()))
         except Exception as error:
             print(error)
-        finally:
-            return self if self.__conn else None
+        return self if self.__conn else None
 
     def db_disconnect(self):
         return self.__conn.close() if self.__conn else False
@@ -38,5 +37,4 @@ class PostrgeSQL:
             if commit is True:
                 self.__conn.rollback()
             raise
-        finally:
-            return feedback
+        return feedback
