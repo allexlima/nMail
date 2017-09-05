@@ -23,4 +23,4 @@ NMail is nano messenger application written in Python (_webserver_) and using Po
 --- 
 ###### Copyright © 2017 [nmail-server](https://github.com/allexlima/nmail-server/) - Licensed by MIT LICENSE.
 
-![Python-powered](https://github.com/allexlima/nMail/blob/master/PythonPoweredAnimSmall.gif?raw=true) 
+[![Python-powered](https://github.com/allexlima/nMail/blob/master/PythonPoweredAnimSmall.gif?raw=true)](https://www.python.org/) 
