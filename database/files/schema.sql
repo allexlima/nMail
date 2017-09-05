@@ -32,7 +32,7 @@ CREATE TABLE n_messages(
     msg_id SMALLSERIAL NOT NULL,
     msg_title VARCHAR(90) NOT NULL,
     msg_content TEXT,
-    msg_viewd BOOL DEFAULT false,
+    msg_viewed BOOL DEFAULT false,
     from_system BOOL DEFAULT false,
     send_datetime TIMESTAMP,
     user_sender SMALLINT,

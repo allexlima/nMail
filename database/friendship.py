@@ -36,30 +36,17 @@ class Friendship:
         if friend_id != user_id:
             sql = "INSERT INTO n_contacts (c_user_id, friend_id) VALUES ((%s), (%s));"
             params = [user_id, friend_id]
-
-            try:
-                feedback = self.__db.query(sql, params, commit=True)
-            except psql.IntegrityError as e:
-                self.__db.write_log("Solicitação já enviada")
-        else:
-            self.__db.write_log("Você pode pode enviar uma solicitação para você mesmo")
+            feedback = self.__db.query(sql, params, commit=True)
         return feedback
 
     def accept(self, user_id, persons_id_to_accept):
         sql_1 = "SELECT * FROM n_contacts WHERE friend_id = (%s) AND c_user_id = (%s);"
         sql_2 = "UPDATE n_contacts SET friendship_active = TRUE WHERE friend_id = (%s) AND c_user_id = (%s);"
         params = [user_id, persons_id_to_accept]
-        feedback = False
-
-        if len(self.__db.query(sql_1, params, fetch=True)) > 0:
-            feedback = self.__db.query(sql_2, params, commit=True)
-        else:
-            self.__db.write_log("O usuário {} não enviou uma solicitação de amizade ao usuário {}".format(
-                persons_id_to_accept, user_id))
-        return feedback
+        return self.__db.query(sql_2, params, commit=True) \
+            if len(self.__db.query(sql_1, params, fetch=True)) > 0 else False
 
     def block(self, user_id, friend_id_to_block):
         sql = "UPDATE n_contacts SET friendship_active = FALSE WHERE c_user_id = (%s) AND friend_id = (%s);"
         params = [user_id, friend_id_to_block]
         return self.__db.query(sql, params, commit=True)
-

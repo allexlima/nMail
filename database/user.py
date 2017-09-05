@@ -22,20 +22,11 @@ class User:
         sql = "INSERT INTO n_users (user_name, user_password, user_email, user_active, user_registration_date) " \
               "VALUES ((%s), (%s), (%s), (%s), (%s));"
         params = [name, password, email, active, date]
-        feedback = False
-
-        try:
-            if self.__db.query(sql, params, commit=True):
-                feedback = self.get_id(email)
-        except psql.IntegrityError:
-            self.__db.write_log("O e-mail '{0}' já encontra-se em uso".format(email))
-        finally:
-            return feedback
+        return self.get_id(email) if self.__db.query(sql, params, commit=True) else False
 
     def remove(self, user_id):
         sql = "DELETE FROM n_users WHERE user_id = (%s);"
         params = [user_id]
-
         return self.__db.query(sql, params=params, commit=True)
 
     def change(self, user_id, new_name=None, new_email=None, new_password=None, is_activated=True, is_admin=False):
@@ -79,6 +70,4 @@ class User:
                   "WHERE LOWER(user_name)  LIKE LOWER(%s) OR LOWER(user_email) = LOWER(%s) AND user_active = TRUE;"
             params = ['%{}%'.format(name_or_email), name_or_email]
             feedback = [dict(item) for item in self.__db.query(sql, params, fetch=True)]
-        else:
-            self.__db.write_log("Insira um nome ou e-mail com três caracteres ou mais")
         return feedback
