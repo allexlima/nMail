@@ -31,26 +31,22 @@ class User:
 
     def change(self, user_id, new_name=None, new_email=None, new_password=None, is_activated=True, is_admin=False):
         sql = "UPDATE n_users SET "
-        params = []
         adds = []
+        params = []
+
         if new_name:
-            adds.append("user_name = (%s)")
+            adds.append("user_name = (%s),")
             params.append(new_name)
         if new_email:
-            adds.append("user_email = (%s)")
+            adds.append("user_email = (%s),")
             params.append(new_email)
         if new_password:
-            adds.append("user_password = (%s)")
+            adds.append("user_password = (%s),")
             params.append(new_password)
-        adds.append("user_active = (%s)")
-        params.append(is_activated)
-        adds.append("user_admin = (%s)")
-        params.append(is_admin)
-        params.append(user_id)
-        for i, item in enumerate(adds):
-            sql += item
-            sql += ", " if i < len(adds)-1 else " "
-        sql += "WHERE user_id = (%s);"
+
+        sql += ' '.join(adds) + " user_active = (%s), user_admin = (%s) WHERE user_id = (%s);"
+        params += [is_activated, is_admin, user_id]
+
         return self.__db.query(sql, params, commit=True)
 
     def login(self, user_email, user_password):
