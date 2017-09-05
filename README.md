@@ -14,11 +14,11 @@ NMail is nano messenger application written in Python (_webserver_) and using Po
 
 #### Setting up database
 
-...
+    ...
 
 #### Installing nmail-server
 
-...
+    ...
 
 --- 
 ###### Copyright © 2017 [nmail-server](https://github.com/allexlima/nmail-server/) - Licensed by MIT LICENSE.
