@@ -1,4 +1,5 @@
-![AutomataTranslator](https://github.com/allexlima/nMail/blob/master/icon.png?raw=true)
+<img src="https://github.com/allexlima/nMail/blob/master/icon.png?raw=true" width="91">
+
 ### Welcome to nmail-server
 
 
