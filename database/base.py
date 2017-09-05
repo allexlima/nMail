@@ -3,7 +3,7 @@ import psycopg2 as psql
 from psycopg2.extras import DictCursor
 
 
-class PostrgeSQL(object):
+class PostrgeSQL:
     def __init__(self):
         self.__conn = None
         self.__log = []
@@ -17,35 +17,26 @@ class PostrgeSQL(object):
     def db_connect(self):
         try:
             self.__conn = psql.connect("user={} password={} dbname={} host={} port={}".format(*self.__config()))
-            return self
-        except Exception as e:
-            self.write_log(e)
+        except Exception as error:
+            print(error)
+        finally:
+            return self if self.__conn else None
 
     def db_disconnect(self):
-        if self.__conn:
-            self.__conn.close()
+        return self.__conn.close() if self.__conn else False
 
     def query(self, sql, params=None, commit=False, fetch=False):
-        feedback = False
-        if self.__conn is not None:
-            try:
-                cursor = self.__conn.cursor(cursor_factory=DictCursor)
-                cursor.execute(sql, params)
-                if commit is True:
-                    self.__conn.commit()
-                feedback = cursor.fetchall() if fetch is True else True
-                cursor.close()
-            except Exception:
-                if commit is True:
-                    self.__conn.rollback()
-                raise
-        else:
-            self.write_log("É necessário iniciar uma conexão com o banco antes de executar operações")
-        return feedback
-
-    def write_log(self, msg):
-        self.__log.append(msg)
-        print(msg)
-
-    def view_log(self):
-        return self.__log
+        feedback = None
+        try:
+            cursor = self.__conn.cursor(cursor_factory=DictCursor)
+            cursor.execute(sql, params)
+            if commit is True:
+                self.__conn.commit()
+            feedback = cursor.fetchall() if fetch is True else None
+            cursor.close()
+        except Exception:
+            if commit is True:
+                self.__conn.rollback()
+            raise
+        finally:
+            return feedback
