@@ -2,6 +2,7 @@
 
 ## Welcome to nmail-server
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/410497409b0c4ae7bcfd2cdf461a74d5)](https://www.codacy.com/app/AllexLima/nmail-server?utm_source=github.com&utm_medium=referral&utm_content=allexlima/nmail-server&utm_campaign=badger)
 [![Python versions](https://img.shields.io/badge/python-2.7%2C%203.2%2C%203.3%2C%203.4%2C%203.5%2C%203.6-blue.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
 
