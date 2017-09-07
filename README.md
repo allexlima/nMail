@@ -1,4 +1,4 @@
-<img src="https://github.com/allexlima/nMail/blob/master/icon.png?raw=true" width="84">
+<img src="https://github.com/allexlima/nMail/blob/master/aux/imgs/icon.png?raw=true" width="84">
 
 ## Welcome to nmail-server
 
@@ -24,4 +24,4 @@ NMail is nano messenger application written in Python (_webserver_) and using Po
 --- 
 ###### Copyright © 2017 [nmail-server](https://github.com/allexlima/nmail-server/) - Licensed by MIT LICENSE.
 
-[![Python-powered](https://github.com/allexlima/nMail/blob/master/PythonPoweredAnimSmall.gif?raw=true)](https://www.python.org/) 
+[![Python-powered](https://github.com/allexlima/nMail/blob/master/aux/imgs/PythonPoweredAnimSmall.gif?raw=true)](https://www.python.org/) 
