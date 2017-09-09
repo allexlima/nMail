@@ -30,7 +30,7 @@ class UserAPI(Resource):
         }, 400)
 
     def get(self, user_id=None):
-        return caching("user_get_" + str(user_id), jsonify(user.list(user_id)[0]))
+        return caching("user_get_" + str(user_id), jsonify(user.list(user_id)[0])) if user_id else self.default_msg
 
     def post(self):
         json_data = request.get_json(force=True)
