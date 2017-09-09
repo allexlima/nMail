@@ -48,7 +48,8 @@ class UserAPI(Resource):
             result = caching("user_get_" + str(user_id), jsonify(user_data[0])) if len(user_data) > 0 else (None, 204)
         return result
 
-    def post(self):
+    @staticmethod
+    def post():
         parser = reqparse.RequestParser()
         parser.add_argument('user_name', type=str, required=True)
         parser.add_argument('user_password', type=str, required=True)
@@ -59,12 +60,16 @@ class UserAPI(Resource):
             feedback = ({"message": "The informed email address is already in use"}, 409)
         return feedback
 
-    def put(self, user_id=None):
-        parser = reqparse.RequestParser()
-        parser.add_argument('user_name', type=str)
-        parser.add_argument('user_email', type=str)
-        parser.add_argument('user_password', type=str)
-        parser.add_argument('user_active', type=bool, default=True)
-        parser.add_argument('user_admin', type=bool, default=False)
-        user.change(user_id, *tuple(parser.parse_args().values()))
-        return jsonify(user.list(user_id)[0])
+    @staticmethod
+    def put(user_id=None):
+        if user_id:
+            parser = reqparse.RequestParser()
+            parser.add_argument('user_name', type=str)
+            parser.add_argument('user_email', type=str)
+            parser.add_argument('user_password', type=str)
+            parser.add_argument('user_active', type=bool, default=True)
+            parser.add_argument('user_admin', type=bool, default=False)
+            user.change(user_id, *tuple(parser.parse_args().values()))
+            return jsonify(user.list(user_id)[0])
+        else:
+            abort(400)
