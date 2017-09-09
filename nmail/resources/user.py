@@ -1,5 +1,5 @@
-from flask import jsonify, request, abort
-from flask_restful import Resource
+from flask import jsonify, abort
+from flask_restful import Resource, reqparse
 from nmail.database import psql, user
 from nmail.resources.common import caching
 
@@ -24,22 +24,47 @@ class UserAPI(Resource):
                     },
                     "return": "the created user_id"
                 },
-                "PUT": "Update an user info",
-                "DELETE": "Remove a specific user from the system"
+                "PUT": {
+                    "description": "Update an user info. All body params are optionals",
+                    "syntax": {
+                        "URI": "/api/user/<int:user_id>",
+                        "Body": {
+                            'user_name': '<string:max_length(50)>',
+                            'user_password': '<string>',
+                            'user_email': '<string>',
+                            'user_admin': '<boolean>',
+                            'user_active': '<boolean>',
+                        }
+                    },
+                    "return": "a user info in JSON Object format"
+                }
             }
         }, 400)
 
     def get(self, user_id=None):
-        return caching("user_get_" + str(user_id), jsonify(user.list(user_id)[0])) if user_id else self.default_msg
+        result = self.default_msg
+        if user_id is not None:
+            user_data = user.list(user_id)
+            result = caching("user_get_" + str(user_id), jsonify(user_data[0])) if len(user_data) > 0 else (None, 204)
+        return result
 
     def post(self):
-        json_data = request.get_json(force=True)
-        feedback = ({"message": ":("}, 500)
+        parser = reqparse.RequestParser()
+        parser.add_argument('user_name', type=str, required=True)
+        parser.add_argument('user_password', type=str, required=True)
+        parser.add_argument('user_email', type=str, required=True)
         try:
-            new_id = user.insert(json_data['user_name'], json_data['user_password'], json_data['user_email'])
-            feedback = jsonify(user_id=new_id)
-        except KeyError as key_name:
-            feedback = ({"message": "Missing key {} in your JSON request".format(key_name)}, 400)
+            feedback = jsonify(user_id=user.insert(*tuple(parser.parse_args().values())))
         except psql.IntegrityError:
-            feedback = ({"message": "The email address '{}' in your JSON request".format(json_data['user_email'])}, 409)
+            feedback = ({"message": "The informed email address is already in use"}, 409)
         return feedback
+
+    def put(self, user_id=None):
+        parser = reqparse.RequestParser()
+        parser.add_argument('user_name', type=str)
+        parser.add_argument('user_email', type=str)
+        parser.add_argument('user_password', type=str)
+        parser.add_argument('user_active', type=bool, default=True)
+        parser.add_argument('user_admin', type=bool, default=False)
+        user.change(user_id, *tuple(parser.parse_args().values()))
+        return jsonify(user.list(user_id)[0])
