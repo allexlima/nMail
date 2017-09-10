@@ -14,13 +14,10 @@ NMail is nano messenger application written in Python (_webserver_) and using Po
 -  **Python 3.6** - Download Python interpreter [here](https://www.python.org/).
 -  **PostgreSQL** - Download postgresql [here](https://www.postgresql.org/).
 
-#### Setting up database
+#### Wiki
 
-Access the [wiki page about database](https://github.com/allexlima/nmail-server/wiki/Database-setup) for this content.
-
-#### Installing nmail-server
-
-    ...
+- [Database setup](https://github.com/allexlima/nmail-server/wiki/Database-setup);
+- [Installing nmail-server](#)
 
 --- 
 ###### Copyright © 2017 [nmail-server](https://github.com/allexlima/nmail-server/) - Licensed by MIT LICENSE.
