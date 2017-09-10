@@ -2,6 +2,7 @@
 
 ## Welcome to nmail-server
 
+[![Build Status](https://travis-ci.org/allexlima/nmail-server.svg)](https://travis-ci.org/allexlima/nmail-server)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/410497409b0c4ae7bcfd2cdf461a74d5)](https://www.codacy.com/app/AllexLima/nmail-server?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=allexlima/nmail-server&amp;utm_campaign=Badge_Grade)
 [![Python versions](https://img.shields.io/badge/python-2.7%2C%203.2%2C%203.3%2C%203.4%2C%203.5%2C%203.6-blue.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
@@ -15,7 +16,7 @@ NMail is nano messenger application written in Python (_webserver_) and using Po
 
 #### Setting up database
 
-    ...
+Access the [wiki page about database](https://github.com/allexlima/nmail-server/wiki/Database-setup) for this content.
 
 #### Installing nmail-server
 
